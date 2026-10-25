@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #FAF7F2;
+    color: #161616;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    background-color: #FAF7F2;
+    color: #161616;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  }
+}
+
+/* Scrollbar sutil y minimalista */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #D3CAC0;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B08D57;
+}
+
+/* Transiciones lentas y refinadas (400 a 700 ms) */
+.transition-luxury {
+  transition: all 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Línea sutil de acento editorial */
+.editorial-line {
+  height: 1px;
+  background-color: #E5DFD7;
+}
+
+/* Aspect ratio vertical para tarjetas de producto de moda (3:4) */
+.aspect-product {
+  aspect-ratio: 3 / 4;
+}
+
+/* Asegurar zonas táctiles mínimas de 44x44px en móviles */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
