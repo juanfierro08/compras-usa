@@ -45,6 +45,14 @@ export const AdminDashboard = () => {
 
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState('');
+
+  // Verificación de variables de entorno de Cloudinary
+  const cloudinaryCloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const cloudinaryUploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const missingCloudinaryEnv = [];
+  if (!cloudinaryCloudName || !cloudinaryCloudName.trim()) missingCloudinaryEnv.push('VITE_CLOUDINARY_CLOUD_NAME');
+  if (!cloudinaryUploadPreset || !cloudinaryUploadPreset.trim()) missingCloudinaryEnv.push('VITE_CLOUDINARY_UPLOAD_PRESET');
 
   // Login de Administrador
   const handleLoginSubmit = async (e) => {
@@ -87,6 +95,7 @@ export const AdminDashboard = () => {
   // Apertura de Modal para Crear / Editar
   const handleOpenCreate = () => {
     setEditingProduct(null);
+    setUploadError('');
     setFormData({
       nombre: '',
       marca: '',
@@ -105,6 +114,7 @@ export const AdminDashboard = () => {
 
   const handleOpenEdit = (p) => {
     setEditingProduct(p);
+    setUploadError('');
     const variants = p.variantes || p.sizes || [];
     setFormData({
       nombre: p.nombre || p.name || '',
@@ -129,6 +139,7 @@ export const AdminDashboard = () => {
 
     setUploadingImages(true);
     setUploadProgress(10);
+    setUploadError('');
 
     try {
       const uploadedUrls = [];
@@ -147,7 +158,8 @@ export const AdminDashboard = () => {
       showToast(`${uploadedUrls.length} imagen(es) subida(s) exitosamente`, 'success');
     } catch (err) {
       console.error(err);
-      showToast('Error al subir a Cloudinary: ' + err.message, 'error');
+      setUploadError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setUploadingImages(false);
       setUploadProgress(0);
@@ -684,6 +696,35 @@ export const AdminDashboard = () => {
                     {formData.imagenes.length} imagen(es)
                   </span>
                 </div>
+
+                {/* Aviso claro si faltan variables de entorno */}
+                {missingCloudinaryEnv.length > 0 && (
+                  <div className="p-3.5 border border-amber-300 bg-amber-50 text-amber-900 text-xs font-sans space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-amber-950">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>Configuración de Cloudinary incompleta</span>
+                    </div>
+                    <p>
+                      Para habilitar la subida de fotos, debes definir en tu archivo <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">.env.local</code>:
+                    </p>
+                    <ul className="list-disc pl-5 font-mono text-[11px] space-y-0.5">
+                      {missingCloudinaryEnv.map(envVar => (
+                        <li key={envVar}>{envVar}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Banner de error detallado en pantalla al subir */}
+                {uploadError && (
+                  <div className="p-3.5 border border-rose-300 bg-rose-50 text-rose-900 text-xs font-sans space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-rose-950">
+                      <AlertCircle className="w-4 h-4 text-rose-700 shrink-0" />
+                      <span>Error al subir imagen a Cloudinary</span>
+                    </div>
+                    <p className="leading-relaxed">{uploadError}</p>
+                  </div>
+                )}
 
                 {/* Botón de Selección de Archivos con Compresión */}
                 <div className="relative border border-dashed border-[#B08D57] p-5 text-center bg-[#F3EFE8]/50">

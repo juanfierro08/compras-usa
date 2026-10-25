@@ -1,7 +1,33 @@
-// Utilidades de Cloudinary para subida y optimización de imágenes
+// Utilidades de Cloudinary para subida y optimización de imágenes (100% Unsigned)
 
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'compras-usa';
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'compras_usa_preset';
+/**
+ * Obtiene y valida las variables de entorno de Cloudinary.
+ * No contiene valores escritos directamente en el código (fallbacks).
+ */
+export const getCloudinaryConfig = () => {
+  const rawCloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const rawUploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  const missing = [];
+  if (!rawCloudName || !rawCloudName.trim()) {
+    missing.push('VITE_CLOUDINARY_CLOUD_NAME');
+  }
+  if (!rawUploadPreset || !rawUploadPreset.trim()) {
+    missing.push('VITE_CLOUDINARY_UPLOAD_PRESET');
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Faltan las siguientes variables de entorno en tu archivo .env.local: ${missing.join(', ')}. Por favor configúralas para poder subir imágenes.`
+    );
+  }
+
+  // Sanitización estricta: sin espacios iniciales/finales ni comillas accidentales
+  const cloudName = rawCloudName.trim().replace(/^["']|["']$/g, '');
+  const uploadPreset = rawUploadPreset.trim().replace(/^["']|["']$/g, '');
+
+  return { cloudName, uploadPreset };
+};
 
 /**
  * Comprime y redimensiona una imagen en el navegador usando HTML5 Canvas antes de subirla.
@@ -67,18 +93,24 @@ export const compressImageBeforeUpload = (file, maxWidth = 1600, maxHeight = 160
 };
 
 /**
- * Sube una imagen a Cloudinary usando un upload preset 'unsigned'.
+ * Sube una imagen a Cloudinary usando estrictamente un upload preset 'unsigned'.
+ * FormData contiene ÚNICAMENTE "file" y "upload_preset".
+ * NO envía api_key, signature, timestamp ni parámetros de firma.
  */
 export const uploadToCloudinary = async (file, onProgress = null) => {
+  const { cloudName, uploadPreset } = getCloudinaryConfig();
+
   const compressed = await compressImageBeforeUpload(file);
   
   const formData = new FormData();
   formData.append('file', compressed);
-  formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('upload_preset', uploadPreset);
+
+  const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+    xhr.open('POST', endpoint);
 
     if (onProgress && xhr.upload) {
       xhr.upload.onprogress = (event) => {
@@ -90,24 +122,41 @@ export const uploadToCloudinary = async (file, onProgress = null) => {
     }
 
     xhr.onload = () => {
+      let response = null;
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch {
+        // Respuesta no es JSON
+      }
+
       if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-          const response = JSON.parse(xhr.responseText);
+        if (response && response.secure_url) {
           resolve(response.secure_url);
-        } catch (e) {
-          reject(new Error('Respuesta inválida del servidor de Cloudinary'));
+        } else {
+          reject(new Error('Cloudinary no devolvió la URL de la imagen (secure_url).'));
         }
       } else {
-        try {
-          const err = JSON.parse(xhr.responseText);
-          reject(new Error(err.error?.message || `Error ${xhr.status} al subir imagen a Cloudinary`));
-        } catch {
-          reject(new Error(`Error ${xhr.status} al subir a Cloudinary. Verifica tu Cloud Name y Upload Preset.`));
+        const errorMsg = response?.error?.message || `Error ${xhr.status}`;
+        
+        // Manejo y diagnóstico detallado de errores comunes de Cloudinary
+        if (errorMsg.toLowerCase().includes('unknown api key')) {
+          reject(new Error(
+            `Cloudinary respondió: "${errorMsg}". Esto ocurre cuando el Cloud name ("${cloudName}") no existe o el Upload preset ("${uploadPreset}") no está configurado como "Unsigned" en Cloudinary. Por favor verifica que el preset sea "Unsigned" en tu consola de Cloudinary.`
+          ));
+        } else if (errorMsg.toLowerCase().includes('upload preset') && errorMsg.toLowerCase().includes('not found')) {
+          reject(new Error(
+            `Cloudinary respondió: "${errorMsg}". El preset "${uploadPreset}" no fue encontrado en la cuenta "${cloudName}".`
+          ));
+        } else {
+          reject(new Error(`Error de Cloudinary (${xhr.status}): ${errorMsg}`));
         }
       }
     };
 
-    xhr.onerror = () => reject(new Error('Fallo de red al conectar con Cloudinary'));
+    xhr.onerror = () => {
+      reject(new Error('Error de conexión o red al comunicarse con el servidor de Cloudinary.'));
+    };
+
     xhr.send(formData);
   });
 };
