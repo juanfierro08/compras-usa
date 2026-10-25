@@ -6,12 +6,12 @@
 export const DEFAULT_CATEGORIES = [
   {
     id: 'ropa',
-    name: 'Ropa & Calzado',
+    name: 'Ropa, Calzado & Bebé',
     slug: 'ropa',
     // TODO: confirmar con el dueño
-    tagline: 'Prendas y calzado importados desde Estados Unidos',
-    description: 'Selección de moda, calzado y complementos traídos directamente de EE.UU.',
-    subcategories: ['Todos', 'Hombre', 'Mujer', 'Calzado', 'Accesorios', 'Bolsos', 'Gorras'],
+    tagline: 'Moda, calzado y cosas de bebé importados de EE.UU.',
+    description: 'Prendas exclusivas para hombre, mujer, calzado y artículos para bebé traídos directamente de EE.UU.',
+    subcategories: ['Todos', 'Hombre', 'Mujer', 'Bebé', 'Calzado', 'Accesorios', 'Bolsos', 'Gorras'],
     color: '#0F1B2D', // Azul noche profundo
     colorBlock: 'from-[#0F1B2D] to-[#070D17]',
     gradient: 'linear-gradient(135deg, #0F1B2D 0%, #070D17 100%)',

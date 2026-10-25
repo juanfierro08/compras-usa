@@ -1099,9 +1099,26 @@ export const AdminDashboard = () => {
                     type="text"
                     value={formData.subcategoria}
                     onChange={(e) => setFormData({ ...formData, subcategoria: e.target.value })}
-                    placeholder="Ej. Calzado / Nicho"
+                    placeholder="Ej. Bebé / Hombre / Calzado"
                     className="w-full p-3 bg-[#F3EFE8] border border-[#E5DFD7] text-xs font-sans text-[#161616] focus:outline-none"
                   />
+                  {/* Sugerencias rápidas por categoría */}
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {categories.find(c => c.id === formData.categoria)?.subcategories?.filter(s => s !== 'Todos').map(sub => (
+                      <button
+                        key={sub}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, subcategoria: sub })}
+                        className={`text-[9px] font-sans px-1.5 py-0.5 border transition-colors ${
+                          formData.subcategoria === sub
+                            ? 'bg-[#0F1B2D] text-[#FAF7F2] border-[#0F1B2D]'
+                            : 'bg-[#FAF7F2] text-[#161616]/70 border-[#E5DFD7] hover:border-[#0F1B2D]'
+                        }`}
+                      >
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>

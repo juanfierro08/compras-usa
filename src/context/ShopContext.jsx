@@ -211,7 +211,7 @@ export const ShopProvider = ({ children }) => {
           }));
           const merged = DEFAULT_CATEGORIES.map(def => {
             const found = firestoreCats.find(c => c.id === def.id);
-            return found ? { ...def, ...found } : def;
+            return found ? { ...def, ...found, name: def.name, subcategories: def.subcategories, tagline: def.tagline, description: def.description } : def;
           });
           firestoreCats.forEach(fc => {
             if (!merged.some(m => m.id === fc.id)) {
