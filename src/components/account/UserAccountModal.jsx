@@ -54,7 +54,7 @@ export const UserAccountModal = () => {
           <div className="pt-4">
             <button
               onClick={() => navigateTo('catalog')}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#161616] text-[#FAF7F2] text-xs font-sans tracking-[0.2em] uppercase hover:bg-[#282828] transition-luxury"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#0F1B2D] text-[#FAF7F2] text-xs font-sans tracking-[0.2em] uppercase hover:bg-[#16263D] border border-[#B08D57]/30 transition-luxury"
             >
               <span>Explorar el Catálogo</span>
               <ArrowRight className="w-3.5 h-3.5 text-[#B08D57]" />
@@ -82,7 +82,7 @@ export const UserAccountModal = () => {
               href={wishlistWhatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 px-8 py-3.5 bg-[#161616] text-[#FAF7F2] text-xs font-sans tracking-[0.2em] uppercase hover:bg-[#282828] transition-luxury flex items-center gap-2"
+              className="shrink-0 px-8 py-3.5 bg-[#0F1B2D] text-[#FAF7F2] text-xs font-sans tracking-[0.2em] uppercase hover:bg-[#16263D] border border-[#B08D57]/30 transition-luxury flex items-center gap-2"
             >
               <MessageCircle className="w-4 h-4 text-[#B08D57]" />
               <span>Cotizar Todo por WhatsApp</span>
@@ -132,7 +132,7 @@ export const UserAccountModal = () => {
                       {p.nombre || p.name}
                     </h3>
                     <div className="font-serif text-lg text-[#161616] mt-2">
-                      {formatCOP(p.precioCOP || p.priceCOP)}
+                      {formatCOP(p.precio || p.precioCOP || p.priceCOP)}
                     </div>
                   </div>
 
@@ -142,7 +142,7 @@ export const UserAccountModal = () => {
                       href={itemWhatsAppUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-3 bg-[#161616] text-[#FAF7F2] text-xs font-sans tracking-[0.16em] uppercase hover:bg-[#282828] transition-luxury flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-[#0F1B2D] text-[#FAF7F2] text-xs font-sans tracking-[0.16em] uppercase hover:bg-[#16263D] border border-[#B08D57]/30 transition-luxury flex items-center justify-center gap-2"
                     >
                       <MessageCircle className="w-3.5 h-3.5 text-[#B08D57]" />
                       <span>Pedir por WhatsApp</span>

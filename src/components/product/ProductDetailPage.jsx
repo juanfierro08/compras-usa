@@ -6,7 +6,7 @@ import { getWhatsAppProductLink } from '../../utils/whatsapp';
 import { getOptimizedImageUrl } from '../../utils/cloudinary';
 import { 
   Heart, ArrowLeft, Check, Copy, AlertCircle, 
-  MessageCircle, Plane, ShieldCheck, Share2 
+  MessageCircle, Plane 
 } from 'lucide-react';
 
 export const ProductDetailPage = () => {
@@ -17,11 +17,11 @@ export const ProductDetailPage = () => {
 
   if (!selectedProduct) {
     return (
-      <div className="py-24 text-center max-w-md mx-auto px-4">
-        <h2 className="font-serif text-2xl mb-4">Ningún artículo seleccionado</h2>
+      <div className="py-24 text-center max-w-md mx-auto px-4 bg-[#FAF7F2]">
+        <h2 className="font-serif text-2xl text-[#0F1B2D] mb-4">Ningún artículo seleccionado</h2>
         <button
           onClick={() => navigateTo('catalog')}
-          className="px-6 py-3 border border-[#161616] text-xs font-sans tracking-[0.18em] uppercase hover:bg-[#161616] hover:text-[#FAF7F2] transition-luxury"
+          className="px-6 py-3 bg-[#0F1B2D] text-[#FAF7F2] text-xs font-sans tracking-[0.18em] uppercase hover:bg-[#16263D] transition-all"
         >
           Volver al Catálogo
         </button>
@@ -32,7 +32,7 @@ export const ProductDetailPage = () => {
   const p = selectedProduct;
   const isSaved = isInWishlist(p.id);
 
-  const name = p.nombre || p.name || 'Pieza Exclusiva';
+  const name = p.nombre || p.name || 'Pieza Importada';
   const brand = p.marca || p.brand || 'Importado USA';
   const price = p.precio || p.priceCOP || 0;
   const description = p.descripcion || p.description || '';
@@ -44,7 +44,7 @@ export const ProductDetailPage = () => {
   const [selectedVariant, setSelectedVariant] = useState(variants[0] || null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Calculadora de envío por departamento
+  // Estimación de entrega por departamento
   const [selectedDepartment, setSelectedDepartment] = useState('Bogotá D.C.');
   const departmentInfo = COLOMBIAN_LOCATIONS.find(d => d.department === selectedDepartment) || COLOMBIAN_LOCATIONS[0];
   const shippingCost = calculateShipping(price, selectedDepartment);
@@ -63,16 +63,16 @@ export const ProductDetailPage = () => {
   // Productos relacionados de la misma categoría en Firestore
   const relatedProducts = products
     .filter(item => (item.categoria || item.category) === categoryId && item.id !== p.id)
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
-    <div className="py-10 sm:py-16 max-w-7xl mx-auto px-4 sm:px-8">
+    <div className="py-10 sm:py-16 max-w-7xl mx-auto px-4 sm:px-8 bg-[#FAF7F2]">
       
       {/* Botón Volver y Compartir */}
       <div className="mb-8 flex items-center justify-between pb-4 border-b border-[#E5DFD7]">
         <button
           onClick={() => navigateTo('catalog', categoryId)}
-          className="inline-flex items-center gap-2 text-xs font-sans tracking-[0.16em] uppercase text-[#161616]/60 hover:text-[#161616] transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-sans tracking-[0.16em] uppercase text-[#0F1B2D] hover:text-[#B08D57] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Volver al Catálogo / {brand}</span>
@@ -81,10 +81,10 @@ export const ProductDetailPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleCopyLink}
-            className="p-2 border border-[#E5DFD7] text-xs font-sans tracking-[0.14em] uppercase text-[#161616]/70 hover:text-[#161616] flex items-center gap-1.5 transition-colors"
+            className="p-2 border border-[#E5DFD7] text-xs font-sans tracking-[0.14em] uppercase text-[#0F1B2D] hover:text-[#B08D57] flex items-center gap-1.5 transition-colors"
             title="Copiar enlace"
           >
-            {copiedLink ? <Check className="w-3.5 h-3.5 text-[#B08D57]" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-[#B08D57]" /> : <Copy className="w-3.5 h-3.5 text-[#0F1B2D]" />}
             <span className="hidden sm:inline">Copiar Enlace</span>
           </button>
         </div>
@@ -93,7 +93,7 @@ export const ProductDetailPage = () => {
       {/* Grid Principal del Producto */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         
-        {/* COLUMNA IZQUIERDA: Galería Vertical */}
+        {/* COLUMNA IZQUIERDA: Galería Vertical 3:4 */}
         <div className="lg:col-span-7 space-y-4">
           
           {/* Foto Principal */}
@@ -113,10 +113,10 @@ export const ProductDetailPage = () => {
             {/* Botón Favoritos */}
             <button
               onClick={() => toggleWishlist(p.id)}
-              className="absolute top-4 right-4 p-3 bg-[#FAF7F2]/90 backdrop-blur-sm text-[#161616] hover:text-[#B08D57] transition-colors border border-[#E5DFD7]"
+              className="absolute top-4 right-4 p-3 bg-[#FAF7F2]/90 backdrop-blur-sm text-[#0F1B2D] hover:text-[#B08D57] transition-colors border border-[#E5DFD7]"
               aria-label="Guardar en favoritos"
             >
-              <Heart className={`w-4 h-4 stroke-[1.5] ${isSaved ? 'fill-[#161616] text-[#161616]' : ''}`} />
+              <Heart className={`w-4 h-4 stroke-[1.5] ${isSaved ? 'fill-[#0F1B2D] text-[#0F1B2D]' : ''}`} />
             </button>
           </div>
 
@@ -127,8 +127,8 @@ export const ProductDetailPage = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`w-20 h-24 overflow-hidden border transition-luxury shrink-0 ${
-                    selectedImage === img ? 'border-[#161616]' : 'border-[#E5DFD7] opacity-60 hover:opacity-100'
+                  className={`w-20 h-24 overflow-hidden border transition-all shrink-0 ${
+                    selectedImage === img ? 'border-[#0F1B2D] scale-102' : 'border-[#E5DFD7] opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img src={getOptimizedImageUrl(img, 300)} alt="" className="w-full h-full object-cover" />
@@ -142,10 +142,11 @@ export const ProductDetailPage = () => {
         <div className="lg:col-span-5 space-y-6">
           
           <div>
+            {/* TODO: confirmar con el dueño */}
             <span className="text-[10px] font-sans tracking-[0.24em] text-[#B08D57] uppercase block mb-1">
-              {brand} · Importación Oficial USA
+              {brand} · Producto Importado de EE.UU.
             </span>
-            <h1 className="font-serif text-3xl sm:text-4xl text-[#161616] font-normal leading-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl text-[#0F1B2D] font-normal leading-tight">
               {name}
             </h1>
           </div>
@@ -155,15 +156,16 @@ export const ProductDetailPage = () => {
             <div className="font-serif text-2xl sm:text-3xl text-[#161616] font-normal">
               {formatCOP(price)}
             </div>
-            <span className="text-[11px] font-sans tracking-[0.1em] text-[#161616]/60 mt-1 block">
-              Precio final en pesos colombianos con aranceles e impuestos DIAN incluidos.
+            {/* TODO: confirmar con el dueño */}
+            <span className="text-[11px] font-sans tracking-[0.08em] text-[#161616]/70 mt-1 block">
+              Precio en pesos colombianos (COP). Pedidos y asesoría directa por WhatsApp.
             </span>
           </div>
 
-          {/* Selector de Variantes (Talla / Color) */}
+          {/* Selector de Variantes (Talla / Color / Presentación) */}
           {variants.length > 0 && (
             <div className="space-y-2">
-              <span className="text-[10px] font-sans tracking-[0.2em] text-[#161616] uppercase block">
+              <span className="text-[10px] font-sans tracking-[0.2em] text-[#0F1B2D] uppercase font-bold block">
                 Seleccionar Opción / Talla:
               </span>
               <div className="flex flex-wrap gap-2">
@@ -173,8 +175,8 @@ export const ProductDetailPage = () => {
                     onClick={() => setSelectedVariant(v)}
                     className={`px-3.5 py-2 text-xs font-sans tracking-[0.12em] uppercase border transition-colors ${
                       selectedVariant === v
-                        ? 'border-[#161616] bg-[#161616] text-[#FAF7F2]'
-                        : 'border-[#E5DFD7] text-[#161616]/75 hover:border-[#161616]'
+                        ? 'border-[#0F1B2D] bg-[#0F1B2D] text-[#FAF7F2]'
+                        : 'border-[#E5DFD7] text-[#161616]/75 hover:border-[#0F1B2D]'
                     }`}
                   >
                     {v}
@@ -184,37 +186,38 @@ export const ProductDetailPage = () => {
             </div>
           )}
 
-          {/* BOTÓN PRINCIPAL: ME INTERESA / PEDIR POR WHATSAPP */}
+          {/* BOTÓN PRINCIPAL: ME INTERESA / PEDIR POR WHATSAPP EN AZUL NOCHE */}
           <div className="pt-2 space-y-2">
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-4 px-6 border border-[#161616] bg-[#161616] hover:bg-[#222222] text-[#FAF7F2] text-xs font-sans tracking-[0.22em] uppercase flex items-center justify-center gap-3 transition-luxury shadow-lifted"
+              className="w-full py-4 px-6 bg-[#0F1B2D] hover:bg-[#16263D] text-[#FAF7F2] border border-[#B08D57]/40 text-xs font-sans tracking-[0.22em] uppercase flex items-center justify-center gap-3 transition-all duration-300 shadow-lifted"
             >
               <MessageCircle className="w-4 h-4 text-[#B08D57]" />
               <span>Me interesa / Pedir por WhatsApp</span>
             </a>
-            <p className="text-[10px] font-sans text-center text-[#161616]/60 tracking-wider">
-              Abre una conversación directa con el nombre y enlace de la pieza listos para chatear.
+            <p className="text-[10px] font-sans text-center text-[#161616]/65 tracking-wider">
+              Abre una conversación en WhatsApp con el nombre de la pieza y la opción elegida ya listos.
             </p>
           </div>
 
-          {/* Calculadora de Envío por Departamento */}
-          <div className="p-4 border border-[#E5DFD7] bg-[#FAF7F2] space-y-3">
-            <div className="flex items-center gap-2 text-[10px] font-sans tracking-[0.2em] uppercase text-[#B08D57]">
+          {/* Calculadora de Entrega por Departamento */}
+          <div className="p-4 border border-[#E5DFD7] bg-[#F2EDE4]/40 space-y-3">
+            <div className="flex items-center gap-2 text-[10px] font-sans tracking-[0.2em] uppercase text-[#B08D57] font-semibold">
               <Plane className="w-3.5 h-3.5" />
-              <span>Envíos Asegurados a Colombia</span>
+              {/* TODO: confirmar con el dueño */}
+              <span>Estimación de Entrega en Colombia</span>
             </div>
             
             <div>
-              <label className="text-[11px] font-sans text-[#161616]/60 block mb-1">
-                Calcular flete según departamento:
+              <label className="text-[11px] font-sans text-[#161616]/70 block mb-1">
+                Calcular según tu departamento:
               </label>
               <select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
-                className="w-full p-2 bg-[#F3EFE8] border border-[#E5DFD7] text-xs font-sans text-[#161616] focus:outline-none"
+                className="w-full p-2 bg-[#FAF7F2] border border-[#E5DFD7] text-xs font-sans text-[#0F1B2D] focus:outline-none"
               >
                 {COLOMBIAN_LOCATIONS.map(d => (
                   <option key={d.department} value={d.department}>{d.department}</option>
@@ -223,22 +226,23 @@ export const ProductDetailPage = () => {
             </div>
 
             <div className="flex items-center justify-between text-xs font-sans pt-1 border-t border-[#E5DFD7]/60">
-              <span className="text-[#161616]/70">Flete estimado nacional:</span>
+              <span className="text-[#161616]/70">Flete estimado:</span>
               <span className="font-serif font-medium text-[#161616]">
                 {shippingCost === 0 ? 'Envío Gratis (supera $300.000 COP)' : formatCOP(shippingCost)}
               </span>
             </div>
-            <div className="text-[10px] font-sans text-[#161616]/60">
+            {/* TODO: confirmar con el dueño */}
+            <div className="text-[10px] font-sans text-[#161616]/65">
               Tiempo estimado de entrega: <strong>{departmentInfo.deliveryDays}</strong>
             </div>
           </div>
 
           {/* Aviso Legal de Salud si aplica */}
           {categoryId === 'salud' && (
-            <div className="p-4 border border-[#B08D57]/40 bg-[#FAF7F2] text-xs font-sans text-[#161616]/80 flex items-start gap-3">
+            <div className="p-4 border border-[#B08D57]/40 bg-[#FAF7F2] text-xs font-sans text-[#161616]/85 flex items-start gap-3">
               <AlertCircle className="w-4 h-4 text-[#B08D57] shrink-0 mt-0.5" />
               <span>
-                <strong>Aviso legal importante:</strong> Los suplementos vitamínicos y productos de salud no sustituyen la consulta médica profesional. Consulte a su médico o especialista antes de consumirlos.
+                <strong>Aviso de salud importante:</strong> Los suplementos y vitaminas importados no sustituyen el diagnóstico, prescripción médica o tratamiento de un profesional de la salud.
               </span>
             </div>
           )}
@@ -246,10 +250,10 @@ export const ProductDetailPage = () => {
           {/* Descripción del Producto */}
           {description && (
             <div className="pt-4 border-t border-[#E5DFD7] space-y-2">
-              <span className="text-[10px] font-sans tracking-[0.2em] text-[#B08D57] uppercase block">
-                Detalles de la Pieza
+              <span className="text-[10px] font-sans tracking-[0.2em] text-[#B08D57] uppercase block font-semibold">
+                Detalles del Artículo
               </span>
-              <div className="text-xs sm:text-sm font-serif text-[#161616]/75 leading-relaxed whitespace-pre-line">
+              <div className="text-xs sm:text-sm font-sans text-[#161616]/75 leading-relaxed whitespace-pre-line">
                 {description}
               </div>
             </div>
@@ -263,12 +267,12 @@ export const ProductDetailPage = () => {
       {relatedProducts.length > 0 && (
         <div className="mt-20 pt-10 border-t border-[#E5DFD7]">
           <span className="text-[10px] font-sans tracking-[0.24em] text-[#B08D57] uppercase block mb-2 text-center">
-            Otras Piezas de la Colección
+            Colección Relacionada
           </span>
-          <h2 className="font-serif text-2xl sm:text-3xl text-center text-[#161616] mb-8">
-            Seleccionadas para Ti
+          <h2 className="font-serif text-2xl sm:text-3xl text-center text-[#0F1B2D] mb-8 font-normal">
+            Otras Piezas que te Pueden Interesar
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {relatedProducts.map(rel => (
               <ProductCard key={rel.id} product={rel} />
             ))}
